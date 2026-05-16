@@ -25,6 +25,10 @@ urlpatterns = [
     path('aid/', include('aid.urls')),
     #path('guide/', include('guide.urls')),
     #path('contacts/', include('contacts.urls')),
+<<<<<<< HEAD
     #path('evacuation/', include('evacuation.urls')),
     path('incidents/', include('incidents.urls')),
+=======
+    path('evacuation/', include('evacuation.urls')),
+>>>>>>> 8ed3885f560cb79666e7d40e9fe4727a995c348b
 ]
