@@ -33,6 +33,9 @@ AUTH_USER_MODEL = 'users.User'
 INSTALLED_APPS = [
     'users',
     'aid',
+    'guide',
+    'contacts',
+    'evacuation',
     'rest_framework',
     'django.contrib.admin',
     'django.contrib.auth',
