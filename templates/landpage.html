@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESQ Landing Page</title>
+
+    <!-- GOOGLE FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Oswald',sans-serif;
+            background:#000;
+            overflow:hidden;
+        }
+
+        /* HERO SECTION */
+
+        .hero{
+    width:100%;
+    min-height:100vh;
+
+    /* YOUR BACKGROUND IMAGE */
+    background:
+    linear-gradient(rgba(0,0,0,0.72),
+    rgba(0,0,0,0.82)),
+    url("images/heli.png");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+
+    position:relative;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    padding-bottom:80px;
+}
+        /* NAVBAR */
+
+        .navbar{
+            width:100%;
+            padding:30px 60px;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            z-index:5;
+        }
+
+        .logo{
+            color:white;
+            font-size:50px;
+            letter-spacing:6px;
+            font-family:'Anton',sans-serif;
+        }
+
+        /* CONTENT */
+
+        .hero-content{
+            position:relative;
+            z-index:5;
+
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+
+            text-align:center;
+
+            width:102%;
+            height:109%;
+            margin-top:-25px;
+        }
+
+        .small-text{
+            color:#9b1d20;
+            letter-spacing:6px;
+            font-size:20px;
+            margin-bottom:10px;
+        }
+
+        .main-heading{
+            font-family:'Anton',sans-serif;
+            font-size:115px;
+            color:white;
+            line-height:0.9;
+        }
+
+        .sub-heading{
+            font-family:'Anton',sans-serif;
+            font-size:110px;
+            color:#9b1d20;
+            line-height:-0.3;
+            margin-bottom:40px;
+        }
+
+        /* BUTTONS */
+
+        .buttons{
+            display:flex;
+            gap:28px;
+            margin-bottom:35px;
+        }
+
+        .btn{
+            padding:26px 52px;
+            text-decoration:none;
+            font-size:28px;
+            letter-spacing:2px;
+            transition:0.3s;
+            border:1px solid white;
+        }
+
+        .btn-red{
+            background:#9b1d20;
+            color:white;
+            border:none;
+        }
+
+        .btn-red:hover{
+            background:black;
+        }
+
+        .btn-outline{
+            color:white;
+            background:transparent;
+        }
+
+        .btn-outline:hover{
+            background:white;
+            color:black;
+        }
+
+        /* INCIDENT FORM */
+
+        .incident-form{
+            width:820px;
+
+            background:rgba(10,10,10,0.85);
+
+            border:1px solid rgba(255,255,255,0.15);
+
+            backdrop-filter:blur(5px);
+
+            padding:28px;
+
+            display:flex;
+            flex-direction:column;
+            gap:14px;
+
+            margin-top:5px;
+        }
+
+        .incident-form h2{
+            color:white;
+            font-size:30px;
+            letter-spacing:2px;
+            margin-bottom:5px;
+        }
+
+        .incident-form input,
+        .incident-form select,
+        .incident-form textarea{
+            width:100%;
+            padding:14px;
+            background:#111;
+            border:1px solid #333;
+            color:white;
+            font-size:15px;
+            font-family:'Oswald',sans-serif;
+            outline:none;
+        }
+
+        .incident-form textarea{
+            resize:none;
+            height:110px;
+        }
+
+        .incident-form input:focus,
+        .incident-form select:focus,
+        .incident-form textarea:focus{
+            border-color:#9b1d20;
+        }
+
+        .submit-btn{
+            width:100%;
+            padding:15px;
+            border:none;
+            background:#9b1d20;
+            color:white;
+            font-size:17px;
+            letter-spacing:2px;
+            cursor:pointer;
+            transition:0.3s;
+            margin-top:5px;
+        }
+
+        .submit-btn:hover{
+            background:black;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width:900px){
+
+            .main-heading,
+            .sub-heading{
+                font-size:70px;
+            }
+
+            .incident-form{
+                width:90%;
+            }
+
+            .buttons{
+                flex-direction:column;
+            }
+        }
+
+        @media(max-width:600px){
+
+            .main-heading,
+            .sub-heading{
+                font-size:48px;
+            }
+
+            .small-text{
+                font-size:11px;
+                letter-spacing:3px;
+            }
+
+            .btn{
+                width:220px;
+                text-align:center;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <section class="hero">
+
+        <!-- NAVBAR -->
+        <nav class="navbar">
+            <h1 class="logo">RESQ</h1>
+        </nav>
+
+        <!-- HERO CONTENT -->
+        <div class="hero-content">
+
+            <p class="small-text">
+                CRITICAL COORDINATION PLATFORM
+            </p>
+
+            <h1 class="main-heading">
+                WHEN SECONDS COUNT,
+            </h1>
+
+            <h1 class="sub-heading">
+                PRECISION MATTERS.
+            </h1>
+
+            <!-- BUTTONS -->
+            <div class="buttons">
+
+                <!-- LOGIN -->
+                <a href="login.html" class="btn btn-red">
+                    LOGIN
+                </a>
+
+                <!-- SIGNUP -->
+                <a href="signup.html" class="btn btn-outline">
+                    SIGN UP
+                </a>
+
+            </div>
+
+            <!-- FORM DIRECTLY BELOW BUTTONS -->
+            <form action="guides.html" class="incident-form">
+
+                <h2>REPORT INCIDENT</h2>
+
+                <input type="text" placeholder="Full Name" required>
+
+                <input type="text" placeholder="Location" required>
+
+                <select required>
+                    <option value="">Select Emergency Type</option>
+                    <option>Fire</option>
+                    <option>Flood</option>
+                    <option>Cyclone</option>
+                    <option>Earthquake</option>
+                    <option>Medical Emergency</option>
+                </select>
+
+                <textarea placeholder="Describe the incident..." required></textarea>
+
+                <!-- REDIRECTS TO GUIDES PAGE -->
+                <button type="submit" class="submit-btn">
+                    SUBMIT REPORT
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+</body>
+
+</html>
