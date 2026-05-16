@@ -25,5 +25,5 @@ urlpatterns = [
     path('aid/', include('aid.urls')),
     #path('guide/', include('guide.urls')),
     #path('contacts/', include('contacts.urls')),
-    #path('evacuation/', include('evacuation.urls')),
+    path('evacuation/', include('evacuation.urls')),
 ]
