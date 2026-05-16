@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'guide',
     'contacts',
     'evacuation',
-    'rest_framework',
+    'incidents',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
