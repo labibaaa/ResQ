@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.db.models import Sum
 from .forms import CashDonationForm, GoodsDonationForm, AidStatsForm
 from .models import CashDonation, GoodsDonation, AidStats
@@ -38,9 +39,8 @@ def donate_cash(request):
         form = CashDonationForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Thank you! Your cash donation has been submitted and is pending verification.')
             return redirect('aid_page')
-    else:
-        form = CashDonationForm()
     return render(request, 'aid/donate.html', {'form': form, 'type': 'cash'})
 
 
@@ -49,9 +49,8 @@ def donate_goods(request):
         form = GoodsDonationForm(request.POST)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Thank you! Your goods donation has been submitted. We\'ll be in touch to arrange collection.')
             return redirect('aid_page')
-    else:
-        form = GoodsDonationForm()
     return render(request, 'aid/donate.html', {'form': form, 'type': 'goods'})
 
 

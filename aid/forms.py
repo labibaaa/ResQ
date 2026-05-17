@@ -25,6 +25,9 @@ class GoodsDonationForm(forms.ModelForm):
             'donor_name', 'contact_number', 'goods_name',
             'quantity', 'unit', 'delivery_method', 'pickup_address'
         ]
+        widgets = {
+            'delivery_method': forms.RadioSelect(),
+        }
 
     def clean(self):
         cleaned_data = super().clean()

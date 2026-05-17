@@ -27,8 +27,14 @@
     {% endif %}
 
     <div class="card" style="padding:40px;">
-      <form method="post">
+      <form method="post" action="{% if type == 'cash' %}{% url 'donate_cash' %}{% else %}{% url 'donate_goods' %}{% endif %}">
         {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div style="margin-bottom:20px;padding:12px 16px;border-radius:var(--radius-sm);background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;">
+          {% for error in form.non_field_errors %}<div>{{ error }}</div>{% endfor %}
+        </div>
+        {% endif %}
 
         <!-- Shared Fields -->
         <div class="grid-2">
