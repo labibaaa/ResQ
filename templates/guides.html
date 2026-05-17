@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RESQ COMMAND | Survival Guides</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#dcdcdc;
+    color:#151515;
+    font-family:'Inter',sans-serif;
+}
+
+/* =========================
+   NAVBAR
+========================= */
+
+.navbar{
+    width:100%;
+    background:#ececec;
+    border-bottom:1px solid #c8c8c8;
+    padding:18px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-family:'Anton',sans-serif;
+    font-size:38px;
+    letter-spacing:4px;
+    color:#8d1f24;
+}
+
+.nav-links{
+    display:flex;
+    gap:25px;
+}
+
+.nav-links a{
+    text-decoration:none;
+}
+
+.nav-btn{
+    padding:12px 22px;
+    border:1px solid #971b1e;
+    background:white;
+    color:#8d1f24;
+    font-weight:600;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.nav-btn:hover{
+    background:#8d1f24;
+    color:white;
+}
+
+/* =========================
+   HERO
+========================= */
+
+.hero{
+    padding:70px 40px 40px;
+}
+
+.hero h1{
+    font-family:'Anton',sans-serif;
+    font-size:75px;
+    line-height:1;
+    letter-spacing:2px;
+    margin-bottom:20px;
+}
+
+.hero h1 span{
+    color:#8d1f24;
+}
+
+.hero p{
+    width:100%;
+
+    color:black;
+    line-height:1.8;
+    font-size:27px;
+
+    text-align:center;
+
+    padding:0 40px;
+}
+/* =========================
+   DISASTER TOGGLE
+========================= */
+
+.toggle-section{
+    padding:20px 40px 40px;
+}
+
+.toggle-title{
+    font-family:'Oswald',sans-serif;
+    letter-spacing:4px;
+    color:white;
+    font-size:35px;
+
+    /* CENTERING */
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    width:fit-content;
+    margin:0 auto 35px auto;
+
+    /* BOX STYLE */
+    padding:22px 32px;
+
+    background:#8d1f24;
+    border:2px solid #000;
+
+    text-align:center;
+
+    animation:pulseBox 1.5s infinite alternate;
+}
+
+/* BOX PULSATES BETWEEN RED & BLACK */
+@keyframes pulseBox{
+
+    0%{
+        background:#9b1d20;
+        border-color:#000;
+    }
+
+    100%{
+        background:#000;
+        border-color:#9b1d20;
+    }
+}
+
+.toggle-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:18px;
+}
+
+.toggle-grid input{
+    display:none;
+}
+
+.toggle-card{
+    background:#f3f3f3;
+    border:1px solid #cfcfcf;
+    padding:22px;
+    cursor:pointer;
+    transition:.3s;
+    text-align:center;
+}
+
+.toggle-card:hover{
+    border-color:black;
+    transform:translateY(-3px);
+}
+
+.toggle-card h3{
+    font-family:'Anton',sans-serif;
+    font-size:28px;
+    letter-spacing:1px;
+    margin-top:10px;
+}
+
+.toggle-card p{
+    margin-top:10px;
+    color:black;
+    font-size:20px;
+    line-height:1.6;
+}
+
+input:checked + .toggle-card{
+    background:black;
+    color: black;;
+    border-color:#8d1f24;
+}
+
+input:checked + .toggle-card p{
+    color:black;
+}
+
+/* =========================
+   GUIDE PANELS
+========================= */
+
+.guides{
+    padding:0 40px 120px;
+}
+
+.guide-panel{
+    display:none;
+    background:#efefef;
+    border:1px solid #c9c9c9;
+    margin-bottom:25px;
+    overflow:hidden;
+}
+
+.guide-header{
+    background:#1d2942;
+    color:white;
+    padding:22px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.guide-header h2{
+    font-family:'Anton',sans-serif;
+    font-size:42px;
+    letter-spacing:2px;
+}
+
+.status{
+    border:1px solid #971b1e;
+    color:#ffb3b3;
+    padding:6px 12px;
+    font-size:22px;
+    letter-spacing:1px;
+}
+
+.guide-content{
+    padding:35px;
+}
+
+.guide-content h3{
+    font-family:'Oswald',sans-serif;
+    color:#971b1e;
+    font-size:48px;
+    margin-bottom:15px;
+    margin-top:25px;
+}
+
+.guide-content ul{
+    padding-left:20px;
+}
+
+.guide-content li{
+    margin-bottom:18px;
+    line-height:1.8;
+    color:black;
+    font-size:24px;
+}
+
+.guide-content p{
+    color:#555;
+    line-height:1.9;
+}
+
+/* =========================
+   TOGGLE FUNCTION
+========================= */
+
+#fire:checked ~ .guides .fire-guide{
+    display:block;
+}
+
+#flood:checked ~ .guides .flood-guide{
+    display:block;
+}
+
+#earthquake:checked ~ .guides .earthquake-guide{
+    display:block;
+}
+
+#cyclone:checked ~ .guides .cyclone-guide{
+    display:block;
+}
+
+#medical:checked ~ .guides .medical-guide{
+    display:block;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer{
+    background:#1d2942;
+    color:white;
+    padding:30px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:4px solid #971b1e;
+}
+
+.footer h3{
+    font-family:'Anton',sans-serif;
+    font-size:32px;
+    letter-spacing:2px;
+}
+
+.footer p{
+    color:#cccccc;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width:768px){
+
+    .navbar{
+        padding:20px;
+        flex-direction:column;
+        gap:20px;
+    }
+
+    .hero{
+        padding:50px 20px 30px;
+    }
+
+    .hero h1{
+        font-size:58px;
+    }
+
+    .toggle-section{
+        padding:20px;
+    }
+
+    .guides{
+        padding:0 20px 80px;
+    }
+
+    .guide-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:15px;
+    }
+
+    .guide-header h2{
+        font-size:30px;
+    }
+
+    .guide-content{
+        padding:25px;
+    }
+
+    .footer{
+        padding:25px 20px;
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
+}
+
+/* HIDE RADIO BUTTONS */
+
+.toggle-wrapper input{
+    display:none;
+}
+
+/* ACTIVE TOGGLE COLORS */
+
+#fire:checked ~ .toggle-section label[for="fire"],
+#flood:checked ~ .toggle-section label[for="flood"],
+#earthquake:checked ~ .toggle-section label[for="earthquake"],
+#cyclone:checked ~ .toggle-section label[for="cyclone"],
+#medical:checked ~ .toggle-section label[for="medical"]{
+
+    background:#8d1f24;
+    color:black;
+    border-color:#8d1f24;
+}
+
+#fire:checked ~ .guides .fire-guide,
+#flood:checked ~ .guides .flood-guide,
+#earthquake:checked ~ .guides .earthquake-guide,
+#cyclone:checked ~ .guides .cyclone-guide,
+#medical:checked ~ .guides .medical-guide{
+    display:block;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">RESQ</div>
+
+    <div class="nav-links">
+
+        <a href="homepage.html">
+            <button class="nav-btn">Home</button>
+        </a>
+
+        <a href="emergency.html">
+            <button class="nav-btn">Ask for assistance</button>
+        </a>
+
+    </div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+    <h1>
+        <span>SURVIVAL</span> GUIDES
+    </h1>
+
+    <p>
+        Select a disaster category below to access emergency survival
+        protocols, evacuation procedures, tactical safety methods,
+        and crisis response instructions.
+    </p>
+
+</section>
+
+<!-- TOGGLE SECTION -->
+
+<!-- TOGGLES -->
+
+<div class="toggle-wrapper">
+
+    <input type="radio" name="guide" id="fire" checked>
+    <input type="radio" name="guide" id="flood">
+    <input type="radio" name="guide" id="earthquake">
+    <input type="radio" name="guide" id="cyclone">
+    <input type="radio" name="guide" id="medical">
+
+    <!-- BUTTONS -->
+
+    <section class="toggle-section">
+
+        <div class="toggle-title">
+            SELECT DISASTER TYPE
+        </div>
+
+        <div class="toggle-grid">
+
+            <label for="fire" class="toggle-card">
+                🔥
+                <h3>FIRE</h3>
+                <p>Fire survival and evacuation protocols.</p>
+            </label>
+
+            <label for="flood" class="toggle-card">
+                🌊
+                <h3>FLOOD</h3>
+                <p>Flood emergency escape and rescue guidance.</p>
+            </label>
+
+            <label for="earthquake" class="toggle-card">
+                🌍
+                <h3>EARTHQUAKE</h3>
+                <p>Earthquake tactical safety procedures.</p>
+            </label>
+
+            <label for="cyclone" class="toggle-card">
+                🌪
+                <h3>CYCLONE</h3>
+                <p>Cyclone preparation and protection methods.</p>
+            </label>
+
+            <label for="medical" class="toggle-card">
+                ✚
+                <h3>MEDICAL</h3>
+                <p>Medical emergency response procedures.</p>
+            </label>
+
+        </div>
+
+    </section>
+
+    <!-- GUIDES -->
+
+    <section class="guides">
+
+        <!-- FIRE -->
+
+        <div class="guide-panel fire-guide">
+
+            <div class="guide-header">
+                <h2>FIRE SURVIVAL GUIDE</h2>
+                <div class="status">CODE RED ACTIVE</div>
+            </div>
+
+            <div class="guide-content">
+
+                <h3>Immediate Actions</h3>
+
+                <ul>
+                    <li>Stay calm and locate nearest exit.</li>
+                    <li>Never use elevators during fire.</li>
+                    <li>Stay low to avoid smoke inhalation.</li>
+                    <li>Cover nose and mouth with cloth.</li>
+                </ul>
+
+                <h3>If Trapped</h3>
+
+                <ul>
+                    <li>Seal gaps under doors.</li>
+                    <li>Signal from windows.</li>
+                    <li>Stay near floor level.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- FLOOD -->
+
+        <div class="guide-panel flood-guide">
+
+            <div class="guide-header">
+                <h2>FLOOD SURVIVAL GUIDE</h2>
+                <div class="status">HIGH WATER ALERT</div>
+            </div>
+
+            <div class="guide-content">
+
+                <h3>Emergency Actions</h3>
+
+                <ul>
+                    <li>Move to higher ground immediately.</li>
+                    <li>Avoid driving through water.</li>
+                    <li>Disconnect electricity if safe.</li>
+                    <li>Carry emergency supplies.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- EARTHQUAKE -->
+
+        <div class="guide-panel earthquake-guide">
+
+            <div class="guide-header">
+                <h2>EARTHQUAKE GUIDE</h2>
+                <div class="status">SEISMIC ALERT</div>
+            </div>
+
+            <div class="guide-content">
+
+                <h3>DROP • COVER • HOLD</h3>
+
+                <ul>
+                    <li>Drop to ground immediately.</li>
+                    <li>Take cover under strong furniture.</li>
+                    <li>Hold until shaking stops.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- CYCLONE -->
+
+        <div class="guide-panel cyclone-guide">
+
+            <div class="guide-header">
+                <h2>CYCLONE GUIDE</h2>
+                <div class="status">STORM WARNING</div>
+            </div>
+
+            <div class="guide-content">
+
+                <h3>Preparation</h3>
+
+                <ul>
+                    <li>Store food and clean water.</li>
+                    <li>Charge devices and radios.</li>
+                    <li>Stay indoors away from windows.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- MEDICAL -->
+
+        <div class="guide-panel medical-guide">
+
+            <div class="guide-header">
+                <h2>MEDICAL RESPONSE GUIDE</h2>
+                <div class="status">TRAUMA RESPONSE</div>
+            </div>
+
+            <div class="guide-content">
+
+                <h3>CPR</h3>
+
+                <ul>
+                    <li>100-120 chest compressions per minute.</li>
+                    <li>Call emergency services immediately.</li>
+                    <li>Continue until help arrives.</li>
+                </ul>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+<!-- GUIDES -->
+
+<section class="guides">
+
+    <!-- FIRE -->
+
+    <div class="guide-panel fire-guide">
+
+        <div class="guide-header">
+            <h2>FIRE SURVIVAL GUIDE</h2>
+            <div class="status">CODE RED ACTIVE</div>
+        </div>
+
+        <div class="guide-content">
+
+            <p>
+                Fire incidents spread rapidly. Immediate action and
+                controlled evacuation procedures significantly increase survival rates.
+            </p>
+
+            <h3>Immediate Actions</h3>
+
+            <ul>
+                <li>Stay calm and identify the nearest emergency exit.</li>
+                <li>Do NOT use elevators during a fire.</li>
+                <li>Stay low to avoid smoke inhalation.</li>
+                <li>Cover nose and mouth using cloth if available.</li>
+            </ul>
+
+            <h3>If Trapped</h3>
+
+            <ul>
+                <li>Seal door gaps with wet cloth.</li>
+                <li>Signal rescuers through windows or lights.</li>
+                <li>Stay near floor level where air is cleaner.</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- FLOOD -->
+
+    <div class="guide-panel flood-guide">
+
+        <div class="guide-header">
+            <h2>FLOOD SURVIVAL GUIDE</h2>
+            <div class="status">SEVERE WATER LEVEL</div>
+        </div>
+
+        <div class="guide-content">
+
+            <p>
+                Floodwaters can move rapidly and carry dangerous debris,
+                electricity, and contamination.
+            </p>
+
+            <h3>Emergency Actions</h3>
+
+            <ul>
+                <li>Move immediately to higher ground.</li>
+                <li>Avoid walking or driving through floodwater.</li>
+                <li>Disconnect electricity if safe.</li>
+                <li>Carry emergency food and clean water.</li>
+            </ul>
+
+            <h3>After Flood</h3>
+
+            <ul>
+                <li>Do not drink contaminated water.</li>
+                <li>Avoid damaged buildings.</li>
+                <li>Monitor official emergency broadcasts.</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- EARTHQUAKE -->
+
+    <div class="guide-panel earthquake-guide">
+
+        <div class="guide-header">
+            <h2>EARTHQUAKE GUIDE</h2>
+            <div class="status">TECTONIC ALERT</div>
+        </div>
+
+        <div class="guide-content">
+
+            <h3>DROP • COVER • HOLD</h3>
+
+            <ul>
+                <li>Drop to hands and knees immediately.</li>
+                <li>Take cover under sturdy furniture.</li>
+                <li>Hold onto shelter until shaking stops.</li>
+            </ul>
+
+            <h3>Safety Measures</h3>
+
+            <ul>
+                <li>Stay away from glass and heavy objects.</li>
+                <li>Do not run outside during shaking.</li>
+                <li>Expect aftershocks after major earthquakes.</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- CYCLONE -->
+
+    <div class="guide-panel cyclone-guide">
+
+        <div class="guide-header">
+            <h2>CYCLONE PREPARATION</h2>
+            <div class="status">STORM WARNING</div>
+        </div>
+
+        <div class="guide-content">
+
+            <h3>Before Cyclone</h3>
+
+            <ul>
+                <li>Store food, water, medicine, and flashlights.</li>
+                <li>Charge emergency communication devices.</li>
+                <li>Secure loose outdoor items.</li>
+            </ul>
+
+            <h3>During Cyclone</h3>
+
+            <ul>
+                <li>Stay indoors away from windows.</li>
+                <li>Follow evacuation instructions immediately.</li>
+                <li>Monitor emergency radio frequencies.</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <!-- MEDICAL -->
+
+    <div class="guide-panel medical-guide">
+
+        <div class="guide-header">
+            <h2>MEDICAL RESPONSE GUIDE</h2>
+            <div class="status">TRAUMA SUPPORT</div>
+        </div>
+
+        <div class="guide-content">
+
+            <h3>CPR Protocol</h3>
+
+            <ul>
+                <li>Place hands at center of chest.</li>
+                <li>100-120 compressions per minute.</li>
+                <li>Call emergency responders immediately.</li>
+            </ul>
+
+            <h3>Bleeding Control</h3>
+
+            <ul>
+                <li>Apply direct pressure using cloth.</li>
+                <li>Elevate injured area if possible.</li>
+                <li>Use tourniquet only for severe bleeding.</li>
+            </ul>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- FOOTER -->
+
+<footer class="footer">
+
+    <div>
+        <h3>RESQ</h3>
+        <p>All tactical emergency protocols active.</p>
+    </div>
+
+    <div>
+        <p>All rights reserved</p>
+    </div>
+
+</footer>
+
+</body>
+</html>
