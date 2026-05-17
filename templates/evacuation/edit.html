@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}ResQ — {% if form.instance.pk %}Edit{% else %}Add{% endif %} Safe Zone{% endblock %}
+
+{% block content %}
+<div style="padding:48px 24px;background:var(--surface);min-height:calc(100vh - var(--nav-h));">
+  <div class="container-sm">
+
+    <a href="{% url 'evacuation_page' %}" class="back-link" style="margin-bottom:24px;display:inline-flex;">← Back to Safe Zones</a>
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">🏠</div>
+      <span class="section-label">{% if form.instance.pk %}Edit Zone{% else %}New Zone{% endif %}</span>
+      <h2>{% if form.instance.pk %}Edit Safe Zone{% else %}Add Safe Zone{% endif %}</h2>
+      <p style="margin-top:8px;">Register a shelter, medical center, or evacuation point.</p>
+    </div>
+
+    <div class="card" style="padding:40px;">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="id_name">Zone Name</label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="form-error">{{ form.name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_zone_type">Zone Type</label>
+          {{ form.zone_type }}
+          {% if form.zone_type.errors %}<div class="form-error">{{ form.zone_type.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_address">Full Address</label>
+          {{ form.address }}
+          {% if form.address.errors %}<div class="form-error">{{ form.address.errors }}</div>{% endif %}
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_latitude">Latitude</label>
+            {{ form.latitude }}
+            {% if form.latitude.errors %}<div class="form-error">{{ form.latitude.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_longitude">Longitude</label>
+            {{ form.longitude }}
+            {% if form.longitude.errors %}<div class="form-error">{{ form.longitude.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div style="background:var(--blue-light);border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:#1e3a8a;">
+          💡 <strong>Tip:</strong> Right-click on Google Maps → "What's here?" to copy exact coordinates.
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_capacity">Total Capacity</label>
+            {{ form.capacity }}
+            <div class="form-hint">Maximum number of people this zone can shelter</div>
+          </div>
+          <div class="form-group">
+            <label for="id_current_occupancy">Current Occupancy</label>
+            {{ form.current_occupancy }}
+            <div class="form-hint">Number of people currently sheltered here</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_notes">Notes (optional)</label>
+          {{ form.notes }}
+          <div class="form-hint">Special instructions, resources available, contact person, etc.</div>
+        </div>
+
+        <div class="form-check" style="margin-bottom:24px;">
+          {{ form.is_active }}
+          <label for="id_is_active" style="font-weight:500;">This zone is currently active and accepting people</label>
+        </div>
+
+        <div style="display:flex;gap:12px;">
+          <button type="submit" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">
+            Save Zone ✓
+          </button>
+          <a href="{% url 'evacuation_page' %}" class="btn btn-outline btn-lg">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

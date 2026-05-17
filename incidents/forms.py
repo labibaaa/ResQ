@@ -16,6 +16,19 @@ class IncidentReportForm(forms.ModelForm):
         required=False
     )
 
+    reporter_safe = forms.BooleanField(
+        required=False,
+        initial=True,
+        widget=forms.CheckboxInput(attrs={'id': 'id_reporter_safe'})
+    )
+
+    emergency_details = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'rows': 4,
+            'placeholder': 'Describe what is happening, how many people are involved, and any other relevant details...'
+        })
+    )
+
     class Meta:
         model = Incident
         fields = [

@@ -43,8 +43,3 @@ def contact_edit(request, pk):
     else:
         form = EmergencyContactForm(instance=contact)
     return render(request, 'contacts/edit.html', {'form': form})
-
-
-from django.shortcuts import render
-
-# Create your views here.

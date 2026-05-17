@@ -29,6 +29,5 @@ urlpatterns = [
     path('evacuation/', include('evacuation.urls')),
     path('incidents/', include('incidents.urls')),
 
-    path('evacuation/', include('evacuation.urls')),
 
 ]

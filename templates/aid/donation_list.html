@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Donation Management{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header__inner">
+    <div>
+      <h2>Donation Management</h2>
+      <p style="margin-top:4px;color:var(--muted);font-size:.9rem;">Verify cash donations and confirm goods received</p>
+    </div>
+    <a href="{% url 'aid_page' %}" class="back-link">← Back to Aid</a>
+  </div>
+</div>
+
+<div style="padding:32px 24px;">
+  <div class="container">
+
+    <!-- Summary Totals -->
+    <div class="grid-4" style="margin-bottom:36px;">
+      <div class="stat-card">
+        <div class="stat-icon">💰</div>
+        <div class="stat-value">৳{{ total_cash_verified|default:"0" }}</div>
+        <div class="stat-label">Cash Verified</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value">{{ total_goods_received|default:"0" }}</div>
+        <div class="stat-label">Goods Received</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⏳</div>
+        <div class="stat-value">{{ pending_cash|default:"0" }}</div>
+        <div class="stat-label">Pending Cash</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🚚</div>
+        <div class="stat-value">{{ pending_goods|default:"0" }}</div>
+        <div class="stat-label">Pending Goods</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('cash', this)">💰 Cash Donations</button>
+      <button class="tab-btn" onclick="switchTab('goods', this)">📦 Goods Donations</button>
+    </div>
+
+    <!-- Cash Donations Tab -->
+    <div id="tab-cash">
+      {% if cash_donations %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Donor</th>
+              <th>Contact</th>
+              <th>bKash No.</th>
+              <th>Amount</th>
+              <th>Transaction ID</th>
+              <th>Note</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for donation in cash_donations %}
+            <tr>
+              <td><strong>{{ donation.donor_name }}</strong></td>
+              <td>{{ donation.contact_number }}</td>
+              <td><code style="font-size:.8rem;background:var(--surface);padding:2px 6px;border-radius:4px;">{{ donation.bkash_number }}</code></td>
+              <td><strong style="color:var(--green);">৳{{ donation.amount }}</strong></td>
+              <td><code style="font-size:.8rem;background:var(--surface);padding:2px 6px;border-radius:4px;">{{ donation.transaction_id }}</code></td>
+              <td style="max-width:140px;font-size:.85rem;color:var(--slate);">{{ donation.note|default:"—"|truncatechars:40 }}</td>
+              <td><span class="badge badge-{{ donation.status }}">{{ donation.status|upper }}</span></td>
+              <td><small>{{ donation.created_at|date:"M d, Y" }}</small></td>
+              <td>
+                {% if donation.status == 'pending' %}
+                <form method="post" action="{% url 'verify_cash' donation.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success btn-sm">Verify ✓</button>
+                </form>
+                {% else %}
+                <span style="font-size:.8rem;color:var(--muted);">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">💰</div>
+        <h3>No cash donations yet</h3>
+        <p>Cash donations will appear here when submitted.</p>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Goods Donations Tab -->
+    <div id="tab-goods" style="display:none;">
+      {% if goods_donations %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Donor</th>
+              <th>Contact</th>
+              <th>Goods</th>
+              <th>Qty</th>
+              <th>Unit</th>
+              <th>Delivery</th>
+              <th>Pickup Address</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for donation in goods_donations %}
+            <tr>
+              <td><strong>{{ donation.donor_name }}</strong></td>
+              <td>{{ donation.contact_number }}</td>
+              <td><strong>{{ donation.goods_name }}</strong></td>
+              <td style="text-align:center;font-weight:600;font-family:var(--font-display);">{{ donation.quantity }}</td>
+              <td>{{ donation.unit }}</td>
+              <td>
+                {% if donation.delivery_method == 'pickup' %}
+                  <span class="badge badge-scheduled">🚚 Pickup</span>
+                {% else %}
+                  <span class="badge badge-active">🏪 Drop-off</span>
+                {% endif %}
+              </td>
+              <td style="max-width:120px;font-size:.82rem;color:var(--slate);">{{ donation.pickup_address|default:"—"|truncatechars:35 }}</td>
+              <td><span class="badge badge-{{ donation.status }}">{{ donation.status|upper }}</span></td>
+              <td><small>{{ donation.created_at|date:"M d, Y" }}</small></td>
+              <td>
+                {% if donation.status == 'pending' or donation.status == 'scheduled' %}
+                <form method="post" action="{% url 'goods_received' donation.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success btn-sm">Received ✓</button>
+                </form>
+                {% else %}
+                <span style="font-size:.8rem;color:var(--muted);">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <h3>No goods donations yet</h3>
+        <p>Goods donations will appear here when submitted.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-cash').style.display  = tab === 'cash'  ? 'block' : 'none';
+    document.getElementById('tab-goods').style.display = tab === 'goods' ? 'block' : 'none';
+  }
+</script>
+{% endblock %}

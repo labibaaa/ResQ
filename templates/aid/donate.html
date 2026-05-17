@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}ResQ — {% if type == 'cash' %}Donate Cash{% else %}Donate Goods{% endif %}{% endblock %}
+
+{% block content %}
+<div style="padding:48px 24px;background:var(--surface);min-height:calc(100vh - var(--nav-h));">
+  <div class="container-sm">
+
+    <a href="{% url 'aid_page' %}" class="back-link" style="margin-bottom:24px;display:inline-flex;">← Back to Aid</a>
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:3rem;margin-bottom:12px;">{% if type == 'cash' %}💰{% else %}📦{% endif %}</div>
+      <span class="section-label">{% if type == 'cash' %}Cash Donation{% else %}Goods Donation{% endif %}</span>
+      <h2>{% if type == 'cash' %}Donate Cash{% else %}Donate Goods{% endif %}</h2>
+      <p style="margin-top:8px;">
+        {% if type == 'cash' %}
+          Send via bKash, then fill this form with your transaction details.
+        {% else %}
+          Donate essential supplies — we'll arrange pickup or accept drop-offs.
+        {% endif %}
+      </p>
+    </div>
+
+    {% if type == 'cash' %}
+    <div style="background:var(--amber-light);border:1px solid #fcd34d;border-radius:var(--radius);padding:16px 20px;margin-bottom:28px;font-size:.875rem;color:#78350f;">
+      <strong>📱 bKash Instructions:</strong> Send your donation to <strong>01XXXXXXXXX</strong> using bKash. Select "Send Money", enter the amount, and note down your Transaction ID. Then complete this form.
+    </div>
+    {% endif %}
+
+    <div class="card" style="padding:40px;">
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- Shared Fields -->
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_donor_name">Your Full Name</label>
+            {{ form.donor_name }}
+            {% if form.donor_name.errors %}<div class="form-error">{{ form.donor_name.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_contact_number">Contact Number</label>
+            {{ form.contact_number }}
+            {% if form.contact_number.errors %}<div class="form-error">{{ form.contact_number.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        {% if type == 'cash' %}
+        <!-- Cash Specific Fields -->
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_bkash_number">Your bKash Number</label>
+            {{ form.bkash_number }}
+            {% if form.bkash_number.errors %}<div class="form-error">{{ form.bkash_number.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_amount">Amount (BDT ৳)</label>
+            {{ form.amount }}
+            {% if form.amount.errors %}<div class="form-error">{{ form.amount.errors }}</div>{% endif %}
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="id_transaction_id">Transaction ID</label>
+          {{ form.transaction_id }}
+          <div class="form-hint">The 10-character transaction ID from your bKash SMS confirmation.</div>
+          {% if form.transaction_id.errors %}<div class="form-error">{{ form.transaction_id.errors }}</div>{% endif %}
+        </div>
+        <div class="form-group">
+          <label for="id_note">Message / Note (optional)</label>
+          {{ form.note }}
+        </div>
+
+        {% else %}
+        <!-- Goods Specific Fields -->
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_goods_name">Goods / Item Name</label>
+            {{ form.goods_name }}
+            {% if form.goods_name.errors %}<div class="form-error">{{ form.goods_name.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_quantity">Quantity</label>
+            {{ form.quantity }}
+            {% if form.quantity.errors %}<div class="form-error">{{ form.quantity.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_unit">Unit</label>
+          {{ form.unit }}
+        </div>
+
+        <div class="form-group">
+          <label>Delivery Method</label>
+          <div style="display:flex;flex-direction:column;gap:10px;padding:14px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);">
+            {% for radio in form.delivery_method %}
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:400;">
+              {{ radio.tag }}
+              <span>{{ radio.choice_label }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="form-group" id="pickupAddressGroup" style="display:none;">
+          <label for="id_pickup_address">Pickup Address</label>
+          {{ form.pickup_address }}
+          <div class="form-hint">Provide your full address so our team can coordinate pickup.</div>
+        </div>
+        {% endif %}
+
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button type="submit" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">
+            Submit Donation ✓
+          </button>
+          <a href="{% url 'aid_page' %}" class="btn btn-outline btn-lg">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if type == 'goods' %}
+<script>
+  const deliveryRadios = document.querySelectorAll('input[name="delivery_method"]');
+  const pickupGroup = document.getElementById('pickupAddressGroup');
+
+  function togglePickup() {
+    const val = document.querySelector('input[name="delivery_method"]:checked')?.value;
+    pickupGroup.style.display = val === 'pickup' ? 'block' : 'none';
+  }
+
+  deliveryRadios.forEach(r => r.addEventListener('change', togglePickup));
+  togglePickup();
+</script>
+{% endif %}
+{% endblock %}

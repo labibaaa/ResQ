@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Aid & Donations{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero__inner">
+    <span class="section-label">Support Relief Efforts</span>
+    <h1 style="margin-bottom:16px;">Every Contribution<br>Saves <span style="color:#f87171;">Lives.</span></h1>
+    <p style="font-size:1.05rem;max-width:500px;color:rgba(255,255,255,.72);margin-bottom:36px;">
+      Your donations of cash and essential goods reach disaster victims across Bangladesh within hours. Join thousands already making a difference.
+    </p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <a href="{% url 'donate_cash' %}" class="btn btn-primary btn-xl">💰 Donate Cash</a>
+      <a href="{% url 'donate_goods' %}" class="btn btn-lg" style="background:rgba(255,255,255,.1);color:white;border-color:rgba(255,255,255,.25);">📦 Donate Goods</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section style="background:white;border-bottom:1px solid var(--border);padding:36px 24px;">
+  <div class="container">
+    <div class="grid-4" style="grid-template-columns:repeat(5,1fr);">
+      <div class="stat-card">
+        <div class="stat-icon">❤️</div>
+        <div class="stat-value">{{ lives_saved|default:"0" }}</div>
+        <div class="stat-label">Lives Saved</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👥</div>
+        <div class="stat-value">{{ total_donors|default:"0" }}</div>
+        <div class="stat-label">Total Donors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">💵</div>
+        <div class="stat-value">৳{{ total_cash|default:"0" }}</div>
+        <div class="stat-label">Cash Raised (BDT)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-value">{{ total_goods|default:"0" }}</div>
+        <div class="stat-label">Goods Received</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🤝</div>
+        <div class="stat-value">{{ active_volunteers|default:"0" }}</div>
+        <div class="stat-label">Active Volunteers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Cards -->
+<section style="padding:72px 24px;background:var(--surface);">
+  <div class="container">
+    <div class="section-heading text-center">
+      <span class="section-label">How to Help</span>
+      <h2>Choose Your Contribution</h2>
+      <p>Two ways to make an immediate difference.</p>
+    </div>
+    <div class="grid-2">
+      <a href="{% url 'donate_cash' %}" class="cta-card cta-card--red" style="display:block;">
+        <span class="cta-card__icon">💰</span>
+        <h3>Donate Cash</h3>
+        <p style="margin-top:8px;margin-bottom:20px;">
+          Send via bKash to our verified account and fill in your transaction details. Funds are allocated to procurement and logistics within 24 hours.
+        </p>
+        <span class="btn" style="background:rgba(255,255,255,.2);color:white;border-color:rgba(255,255,255,.3);">Donate Now →</span>
+      </a>
+      <a href="{% url 'donate_goods' %}" class="cta-card cta-card--navy" style="display:block;">
+        <span class="cta-card__icon">📦</span>
+        <h3>Donate Goods</h3>
+        <p style="margin-top:8px;margin-bottom:20px;">
+          Donate essential supplies — food, medicine, clothing, and clean water. Schedule a drop-off or request our team to pick up from your location.
+        </p>
+        <span class="btn" style="background:rgba(255,255,255,.15);color:white;border-color:rgba(255,255,255,.25);">Donate Goods →</span>
+      </a>
+    </div>
+
+    <!-- How It Works -->
+    <div class="card" style="margin-top:32px;padding:40px;">
+      <h3 style="margin-bottom:28px;text-align:center;">How Donations Work</h3>
+      <div class="grid-3">
+        <div style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:12px;">1️⃣</div>
+          <h4 style="font-size:1rem;margin-bottom:8px;">Submit Your Donation</h4>
+          <p style="font-size:.875rem;">Fill out the form with your details and donation info.</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:12px;">2️⃣</div>
+          <h4 style="font-size:1rem;margin-bottom:8px;">Verification</h4>
+          <p style="font-size:.875rem;">Our authority team verifies cash transactions and arranges goods collection.</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-size:2rem;margin-bottom:12px;">3️⃣</div>
+          <h4 style="font-size:1rem;margin-bottom:8px;">Relief Delivered</h4>
+          <p style="font-size:.875rem;">Resources are dispatched to verified incident locations immediately.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% if user.is_authenticated and user.role == 'authority' %}
+<section style="padding:40px 24px;background:white;border-top:1px solid var(--border);">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <h3>Authority Controls</h3>
+        <p style="font-size:.875rem;margin-top:4px;">Manage donations and update aid statistics.</p>
+      </div>
+      <div style="display:flex;gap:12px;">
+        <a href="{% url 'donation_list' %}" class="btn btn-primary">📋 Manage Donations</a>
+        <a href="{% url 'update_lives_saved' %}" class="btn btn-outline">❤️ Update Lives Saved</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

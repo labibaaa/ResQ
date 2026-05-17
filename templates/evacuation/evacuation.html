@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Safe Zones & Evacuation{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section style="background:var(--navy);padding:56px 24px;border-bottom:2px solid var(--red);">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+      <div>
+        <span class="section-label">Evacuation Network</span>
+        <h1 style="color:white;margin-bottom:8px;">Safe Zones &amp; Evacuation Routes</h1>
+        <p style="color:rgba(255,255,255,.7);max-width:480px;">
+          Find verified shelters, medical centers, and safe evacuation points near you across Bangladesh.
+        </p>
+      </div>
+      {% if user.is_authenticated and user.role == 'authority' %}
+      <a href="{% url 'zone_create' %}" class="btn btn-primary btn-lg">+ Add New Zone</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div style="padding:40px 24px;">
+  <div class="container">
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <span style="font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Zone Type:</span>
+      <button class="filter-btn active" onclick="filterZones('all', this)">All Zones</button>
+      <button class="filter-btn" onclick="filterZones('general', this)">🏠 General Shelter</button>
+      <button class="filter-btn" onclick="filterZones('medical', this)">🏥 Medical Center</button>
+      <button class="filter-btn" onclick="filterZones('flood', this)">🌊 Flood-Safe</button>
+      <button class="filter-btn" onclick="filterZones('fire', this)">🔥 Fire-Safe</button>
+    </div>
+
+    <!-- Map -->
+    <div class="card" style="padding:0;overflow:hidden;margin-bottom:36px;">
+      <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+        <h4>🗺️ Zone Map</h4>
+        <small class="text-muted">Click any marker for details</small>
+      </div>
+      <div id="map" style="height:420px;border-radius:0;"></div>
+    </div>
+
+    <!-- Zone Cards Grid -->
+    <div class="section-heading">
+      <h3>All Safe Zones <span style="font-size:.9rem;font-weight:400;color:var(--muted);">({{ zones|length }} total)</span></h3>
+    </div>
+
+    {% if zones %}
+    <div class="grid-3" id="zonesGrid">
+      {% for zone in zones %}
+      <div class="zone-card {% if zone.is_full %}full{% endif %}" data-type="{{ zone.zone_type }}">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;gap:8px;">
+          <div>
+            <h4 style="font-size:1rem;margin-bottom:4px;">{{ zone.name }}</h4>
+            <span class="badge badge-active" style="font-size:.7rem;">
+              {% if zone.zone_type == 'general' %}🏠 General Shelter
+              {% elif zone.zone_type == 'medical' %}🏥 Medical Center
+              {% elif zone.zone_type == 'flood' %}🌊 Flood-Safe
+              {% elif zone.zone_type == 'fire' %}🔥 Fire-Safe
+              {% else %}🏚️ {{ zone.zone_type|title }}{% endif %}
+            </span>
+          </div>
+          {% if zone.is_full %}
+          <span class="badge-full">FULL</span>
+          {% endif %}
+        </div>
+
+        <p style="font-size:.83rem;color:var(--muted);margin-bottom:14px;">📍 {{ zone.address }}</p>
+
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:6px;">
+            <span style="color:var(--muted);">Occupancy</span>
+            <span style="font-weight:600;">{{ zone.current_occupancy }} / {{ zone.capacity }}</span>
+          </div>
+          {% with pct=zone.current_occupancy|floatformat:0 %}
+          <div class="capacity-bar">
+            <div class="capacity-bar__fill {% if zone.is_full %}full{% elif zone.current_occupancy > zone.capacity|divisibleby:2 %}warn{% endif %}"
+                 style="width:{% widthratio zone.current_occupancy zone.capacity 100 %}%;"></div>
+          </div>
+          {% endwith %}
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">
+          <span style="font-size:.83rem;color:{% if zone.is_full %}var(--red){% else %}var(--green){% endif %};font-weight:600;">
+            {% if zone.is_full %}⛔ No Availability{% else %}✓ {{ zone.capacity|add:"-"|add:zone.current_occupancy }} spots available{% endif %}
+          </span>
+          {% if user.is_authenticated and user.role == 'authority' %}
+          <a href="{% url 'zone_edit' zone.id %}" class="btn btn-outline btn-sm">Edit</a>
+          {% endif %}
+        </div>
+
+        {% if zone.notes %}
+        <p style="font-size:.78rem;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">{{ zone.notes }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🏠</div>
+      <h3>No safe zones registered</h3>
+      <p>{% if user.is_authenticated and user.role == 'authority' %}Add the first safe zone using the button above.{% else %}Safe zones will appear here once registered by authorities.{% endif %}</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Initialize Map
+  const map = L.map('map').setView([23.6850, 90.3563], 7);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Fetch zones from JSON endpoint and plot markers
+  fetch('/evacuation/zones.json')
+    .then(r => r.json())
+    .then(zones => {
+      zones.forEach(zone => {
+        const color = zone.is_full ? '#dc2626' : '#16a34a';
+        const icon = L.divIcon({
+          html: `<div style="background:${color};width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.35);"></div>`,
+          iconSize: [14, 14], iconAnchor: [7, 7]
+        });
+        L.marker([zone.latitude, zone.longitude], { icon })
+          .addTo(map)
+          .bindPopup(`
+            <strong>${zone.name}</strong><br>
+            <span style="font-size:.8rem;color:#64748b;">${zone.zone_type}</span><br>
+            <span style="font-size:.85rem;">Capacity: ${zone.current_occupancy}/${zone.capacity}</span><br>
+            ${zone.is_full ? '<span style="color:#dc2626;font-weight:600;">⛔ FULL</span>' : '<span style="color:#16a34a;font-weight:600;">✓ Available</span>'}
+          `);
+      });
+    })
+    .catch(() => console.log('Could not load zone data for map.'));
+
+  // Filter cards
+  function filterZones(type, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.zone-card').forEach(card => {
+      card.parentElement.style.display =
+        (type === 'all' || card.dataset.type === type) ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}

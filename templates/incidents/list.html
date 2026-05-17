@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Incident Reports{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header__inner">
+    <div>
+      <h2>
+        {% if user.role == 'volunteer' %}My Assigned Incidents{% else %}All Incident Reports{% endif %}
+      </h2>
+      <p style="margin-top:4px;color:var(--muted);font-size:.9rem;">
+        {{ incidents|length }} incident{{ incidents|length|pluralize }} found
+      </p>
+    </div>
+    <a href="{% url 'home' %}#report" class="btn btn-primary">+ Report New Incident</a>
+  </div>
+</div>
+
+<div style="padding:32px 24px;">
+  <div class="container">
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <span style="font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;">Filter:</span>
+      <button class="filter-btn active" onclick="filterIncidents('all', this)">All</button>
+      <button class="filter-btn" onclick="filterIncidents('pending', this)">Pending</button>
+      <button class="filter-btn" onclick="filterIncidents('active', this)">Active</button>
+      <button class="filter-btn" onclick="filterIncidents('resolved', this)">Resolved</button>
+      <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
+      <button class="filter-btn" onclick="filterSeverity('critical', this)">🔴 Critical</button>
+      <button class="filter-btn" onclick="filterSeverity('high', this)">🟠 High</button>
+      <button class="filter-btn" onclick="filterSeverity('medium', this)">🟡 Medium</button>
+      <button class="filter-btn" onclick="filterSeverity('low', this)">🟢 Low</button>
+    </div>
+
+    {% if incidents %}
+    <div class="table-wrap">
+      <table id="incidentTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Type</th>
+            <th>Severity</th>
+            <th>Reporter</th>
+            <th>Location</th>
+            <th>Affected</th>
+            <th>Status</th>
+            <th>Reported</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for incident in incidents %}
+          <tr data-status="{{ incident.status }}" data-severity="{{ incident.severity }}">
+            <td style="font-family:var(--font-display);font-weight:700;color:var(--muted);font-size:.8rem;">#{{ incident.id }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.1rem;">
+                  {% if incident.emergency_type == 'fire' %}🔥
+                  {% elif incident.emergency_type == 'flood' %}🌊
+                  {% elif incident.emergency_type == 'earthquake' %}🏚️
+                  {% elif incident.emergency_type == 'medical' %}🏥
+                  {% elif incident.emergency_type == 'structural' %}🏗️
+                  {% else %}⚡{% endif %}
+                </span>
+                <span style="font-weight:500;text-transform:capitalize;">{{ incident.emergency_type }}</span>
+              </div>
+            </td>
+            <td>
+              <span class="badge badge-{{ incident.severity }}">{{ incident.severity|upper }}</span>
+            </td>
+            <td>
+              <div style="font-weight:500;">{{ incident.reporter_name }}</div>
+              <small>{{ incident.contact_number }}</small>
+            </td>
+            <td style="max-width:160px;">
+              <div style="font-size:.85rem;color:var(--slate);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                {{ incident.location_label|default:"—" }}
+              </div>
+              <small>{{ incident.latitude }}, {{ incident.longitude }}</small>
+            </td>
+            <td style="text-align:center;font-weight:600;font-family:var(--font-display);">
+              {{ incident.people_affected }}
+            </td>
+            <td>
+              <span class="badge badge-{{ incident.status }}">{{ incident.status|upper }}</span>
+            </td>
+            <td>
+              <div style="font-size:.82rem;color:var(--slate);">
+                {{ incident.reported_at|date:"M d" }}<br>
+                <small>{{ incident.reported_at|time:"H:i" }}</small>
+              </div>
+            </td>
+            <td>
+              <div style="display:flex;gap:6px;align-items:center;">
+                <a href="{% url 'incident_detail' incident.id %}" class="btn btn-outline btn-sm">View</a>
+                {% if user.role == 'authority' and incident.status != 'resolved' %}
+                <form method="post" action="{% url 'resolve_incident' incident.id %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Mark this incident as resolved?')">Resolve</button>
+                </form>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No incidents found</h3>
+      <p>{% if user.role == 'volunteer' %}No incidents have been assigned to you yet.{% else %}No incidents have been reported yet.{% endif %}</p>
+      <a href="{% url 'home' %}#report" class="btn btn-primary" style="margin-top:20px;">Report an Incident</a>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function filterIncidents(status, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const rows = document.querySelectorAll('#incidentTable tbody tr');
+    rows.forEach(row => {
+      row.style.display = (status === 'all' || row.dataset.status === status) ? '' : 'none';
+    });
+  }
+  function filterSeverity(severity, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const rows = document.querySelectorAll('#incidentTable tbody tr');
+    rows.forEach(row => {
+      row.style.display = row.dataset.severity === severity ? '' : 'none';
+    });
+  }
+</script>
+{% endblock %}

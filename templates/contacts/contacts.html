@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Emergency Contacts{% endblock %}
+
+{% block content %}
+
+<!-- Emergency Banner -->
+<div style="background:var(--red);padding:14px 24px;text-align:center;">
+  <div style="font-size:1.1rem;font-weight:700;color:white;font-family:var(--font-display);letter-spacing:.02em;">
+    🚨 National Emergency Hotline: <a href="tel:999" style="color:white;text-decoration:underline;font-size:1.3rem;">999</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    Fire Service: <a href="tel:199" style="color:white;text-decoration:underline;font-size:1.3rem;">199</a>
+    &nbsp;&nbsp;|&nbsp;&nbsp;
+    Ambulance: <a href="tel:199" style="color:white;text-decoration:underline;font-size:1.3rem;">199</a>
+  </div>
+</div>
+
+<!-- Header -->
+<section style="background:var(--navy);padding:48px 24px;border-bottom:2px solid var(--red);">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div>
+        <span class="section-label">Emergency Directory</span>
+        <h1 style="color:white;margin-bottom:8px;">Emergency Contacts</h1>
+        <p style="color:rgba(255,255,255,.7);">Quick access to emergency services and response teams across Bangladesh.</p>
+      </div>
+      {% if user.is_authenticated and user.role == 'authority' %}
+      <a href="{% url 'contact_create' %}" class="btn btn-primary btn-lg">+ Add Contact</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div style="padding:48px 24px;">
+  <div class="container">
+
+    {% if grouped %}
+    {% for category, contacts in grouped.items %}
+    <div style="margin-bottom:48px;">
+
+      <!-- Category Heading -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--border);">
+        <span style="font-size:1.75rem;">
+          {% if 'fire' in category|lower %}🔥
+          {% elif 'police' in category|lower %}🚔
+          {% elif 'hospital' in category|lower or 'medical' in category|lower %}🏥
+          {% elif 'shelter' in category|lower %}🏠
+          {% elif 'ngo' in category|lower %}🤝
+          {% elif 'military' in category|lower or 'army' in category|lower %}🪖
+          {% elif 'coast' in category|lower %}⛵
+          {% else %}📞{% endif %}
+        </span>
+        <h3 style="font-size:1.35rem;margin:0;">{{ category }}</h3>
+        <span style="font-size:.8rem;color:var(--muted);margin-left:auto;">{{ contacts|length }} contact{{ contacts|length|pluralize }}</span>
+      </div>
+
+      <!-- Contact Cards -->
+      <div class="grid-3">
+        {% for contact in contacts %}
+        <div class="contact-card">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px;">
+            <h4 style="font-size:.95rem;margin:0;">{{ contact.name }}</h4>
+            {% if user.is_authenticated and user.role == 'authority' %}
+            <a href="{% url 'contact_edit' contact.id %}" class="btn btn-outline btn-sm" style="flex-shrink:0;">Edit</a>
+            {% endif %}
+          </div>
+
+          <a href="tel:{{ contact.phone_number }}" class="phone" style="display:block;margin-bottom:10px;">
+            📞 {{ contact.phone_number }}
+          </a>
+
+          {% if contact.address %}
+          <p style="font-size:.8rem;color:var(--muted);margin-bottom:8px;">📍 {{ contact.address }}</p>
+          {% endif %}
+
+          {% if contact.notes %}
+          <p style="font-size:.8rem;color:var(--slate);padding-top:8px;border-top:1px solid var(--border);">{{ contact.notes }}</p>
+          {% endif %}
+
+          {% if not contact.is_active %}
+          <div style="margin-top:8px;">
+            <span class="badge badge-pending">Inactive</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📞</div>
+      <h3>No contacts registered</h3>
+      <p>{% if user.is_authenticated and user.role == 'authority' %}Add the first emergency contact using the button above.{% else %}Emergency contacts will appear here once added by authorities.{% endif %}</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

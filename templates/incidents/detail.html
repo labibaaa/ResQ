@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Incident #{{ incident.id }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div class="page-header__inner">
+    <div>
+      <a href="{% url 'incident_list' %}" class="back-link" style="margin-bottom:10px;display:inline-flex;">← Back to Incidents</a>
+      <h2 style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:8px;">
+        {% if incident.emergency_type == 'fire' %}🔥
+        {% elif incident.emergency_type == 'flood' %}🌊
+        {% elif incident.emergency_type == 'earthquake' %}🏚️
+        {% elif incident.emergency_type == 'medical' %}🏥
+        {% elif incident.emergency_type == 'structural' %}🏗️
+        {% else %}⚡{% endif %}
+        {{ incident.emergency_type|upper }} Emergency
+        <span class="badge badge-{{ incident.severity }}">{{ incident.severity|upper }}</span>
+        <span class="badge badge-{{ incident.status }}">{{ incident.status|upper }}</span>
+      </h2>
+    </div>
+    {% if user.role == 'authority' and incident.status != 'resolved' %}
+    <form method="post" action="{% url 'resolve_incident' incident.id %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Mark as resolved?')">
+        ✓ Resolve Incident
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<div style="padding:40px 24px;">
+  <div class="container">
+    <div class="grid-2" style="align-items:start;">
+
+      <!-- ── Left Column ── -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- Reporter Info -->
+        <div class="card">
+          <h4 style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">👤 Reporter Information</h4>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Name</div>
+              <div style="font-weight:600;margin-top:2px;">{{ incident.reporter_name }}</div>
+            </div>
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Contact</div>
+              <div style="margin-top:2px;"><a href="tel:{{ incident.contact_number }}" style="color:var(--red);font-weight:600;">{{ incident.contact_number }}</a></div>
+            </div>
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Reporter Safe?</div>
+              <div style="margin-top:4px;">
+                {% if incident.reporter_safe %}
+                  <span class="badge badge-resolved">✓ Yes, Safe</span>
+                {% else %}
+                  <span class="badge badge-critical">⚠️ NOT SAFE</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location -->
+        <div class="card">
+          <h4 style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">📍 Location</h4>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Location Label</div>
+              <div style="font-weight:500;margin-top:2px;">{{ incident.location_label|default:"Not provided" }}</div>
+            </div>
+            <div class="grid-2">
+              <div>
+                <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Latitude</div>
+                <div style="font-family:monospace;margin-top:2px;">{{ incident.latitude }}</div>
+              </div>
+              <div>
+                <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Longitude</div>
+                <div style="font-family:monospace;margin-top:2px;">{{ incident.longitude }}</div>
+              </div>
+            </div>
+            <a href="https://maps.google.com/?q={{ incident.latitude }},{{ incident.longitude }}" target="_blank" class="btn btn-outline btn-sm" style="width:fit-content;">
+              Open in Google Maps ↗
+            </a>
+          </div>
+        </div>
+
+        <!-- Incident Stats -->
+        <div class="card">
+          <h4 style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">📊 Incident Stats</h4>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">People Affected</div>
+              <div style="font-family:var(--font-display);font-size:2rem;font-weight:800;color:var(--navy);margin-top:2px;">{{ incident.people_affected }}</div>
+            </div>
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Reported At</div>
+              <div style="margin-top:2px;">{{ incident.reported_at|date:"F j, Y — H:i" }}</div>
+            </div>
+            <div>
+              <div class="text-muted" style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;font-weight:600;">Assigned Volunteer</div>
+              <div style="margin-top:2px;">
+                {% if incident.assigned_volunteer %}
+                  <span style="font-weight:500;">{{ incident.assigned_volunteer.username }}</span>
+                {% else %}
+                  <span class="text-muted">Not yet assigned</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Assign Volunteer (Authority only) ── -->
+        {% if user.role == 'authority' and incident.status != 'resolved' %}
+        <div class="card">
+          <h4 style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">🤝 Assign Volunteer</h4>
+          <form method="post" action="{% url 'assign_volunteer' incident.id %}">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="volunteer_id">Select Volunteer</label>
+              <select name="volunteer_id" id="volunteer_id">
+                <option value="">— Unassign —</option>
+                {% for volunteer in volunteers %}
+                  <option value="{{ volunteer.id }}"
+                    {% if incident.assigned_volunteer.id == volunteer.id %}selected{% endif %}>
+                    {{ volunteer.username }}{% if volunteer.first_name %} ({{ volunteer.first_name }} {{ volunteer.last_name }}){% endif %}
+                  </option>
+                {% empty %}
+                  <option disabled>No active volunteers available</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
+              Save Assignment
+            </button>
+          </form>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- ── Right Column ── -->
+      <div style="display:flex;flex-direction:column;gap:20px;">
+
+        <!-- Description -->
+        <div class="card">
+          <h4 style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">📝 Emergency Details</h4>
+          <p style="line-height:1.75;color:var(--slate);">{{ incident.emergency_details }}</p>
+        </div>
+
+        <!-- Resources Needed -->
+        <div class="card">
+          <h4 style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);">🛠️ Resources Needed</h4>
+          {% if incident.resources_needed %}
+          <div class="tag-list">
+            {% for resource in incident.resources_needed %}
+            <span class="tag">{{ resource }}</span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="text-muted">No specific resources listed.</p>
+          {% endif %}
+        </div>
+
+        <!-- Map -->
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+            <h4>🗺️ Incident Map</h4>
+          </div>
+          <div id="map" style="height:280px;border-radius:0;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const lat = {{ incident.latitude }};
+  const lng = {{ incident.longitude }};
+  const map = L.map('map').setView([lat, lng], 14);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+  const icon = L.divIcon({
+    html: `<div style="background:var(--red);width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.4);"></div>`,
+    iconSize: [16, 16], iconAnchor: [8, 8]
+  });
+  L.marker([lat, lng], { icon })
+    .addTo(map)
+    .bindPopup(`<strong>{{ incident.emergency_type|upper }}</strong><br>{{ incident.location_label|default:"Incident location" }}`)
+    .openPopup();
+</script>
+{% endblock %}

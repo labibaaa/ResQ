@@ -4,13 +4,13 @@ from django.http import JsonResponse
 from .models import SafeZone
 from .forms import SafeZoneForm
 
+
 def evacuation_page(request):
     zones = SafeZone.objects.filter(is_active=True).order_by('zone_type')
     return render(request, 'evacuation/evacuation.html', {'zones': zones})
 
 
 def safe_zones_json(request):
-    # Called by the frontend map to get all active safe zones
     zone_type = request.GET.get('type')
     zones = SafeZone.objects.filter(is_active=True)
     if zone_type:
@@ -71,7 +71,9 @@ def update_occupancy(request, pk):
     zone = get_object_or_404(SafeZone, pk=pk)
     if request.method == 'POST':
         occupancy = request.POST.get('current_occupancy')
-        if occupancy is not None:
+        try:
             zone.current_occupancy = int(occupancy)
             zone.save()
+        except (ValueError, TypeError):
+            pass
     return redirect('evacuation_page')

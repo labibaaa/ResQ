@@ -60,10 +60,6 @@ class GoodsDonation(models.Model):
 
 
 class AidStats(models.Model):
-    """
-    Single-row table. Authorities update lives_saved manually.
-    Everything else is computed from donations and incidents.
-    """
     lives_saved = models.PositiveIntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
     updated_by = models.ForeignKey(

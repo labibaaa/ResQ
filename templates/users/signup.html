@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Create Account{% endblock %}
+
+{% block content %}
+<div style="padding:48px 24px;background:var(--surface);min-height:calc(100vh - var(--nav-h));">
+  <div class="container-sm">
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <span class="section-label">Join ResQ</span>
+      <h2>Create Your Account</h2>
+      <p>Register to volunteer or manage disaster relief operations in Bangladesh.</p>
+    </div>
+
+    <div class="card" style="padding:40px;">
+      <form method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="alert alert-error" style="position:static;max-width:none;margin-bottom:20px;">
+          ⚠️
+          {% for field in form %}
+            {% for error in field.errors %}
+              <div><strong>{{ field.label }}:</strong> {{ error }}</div>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
+            <div>{{ error }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_username">Username</label>
+            {{ form.username }}
+            {% if form.username.errors %}<div class="form-error">{{ form.username.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_email">Email Address</label>
+            {{ form.email }}
+            {% if form.email.errors %}<div class="form-error">{{ form.email.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_password1">Password</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}<div class="form-error">{{ form.password1.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_password2">Confirm Password</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}<div class="form-error">{{ form.password2.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_role">Account Role</label>
+          {{ form.role }}
+          {% if form.role.errors %}<div class="form-error">{{ form.role.errors }}</div>{% endif %}
+          <div class="form-hint">Choose the role that best describes how you'll use ResQ.</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_nid_number">NID Number</label>
+            {{ form.nid_number }}
+            {% if form.nid_number.errors %}<div class="form-error">{{ form.nid_number.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_contact_number">Contact Number</label>
+            {{ form.contact_number }}
+            {% if form.contact_number.errors %}<div class="form-error">{{ form.contact_number.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_occupation">Occupation</label>
+            {{ form.occupation }}
+          </div>
+          <div class="form-group">
+            <label for="id_workplace">Workplace</label>
+            {{ form.workplace }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_date_of_birth">Date of Birth</label>
+          {{ form.date_of_birth }}
+        </div>
+
+        <div style="background:var(--amber-light);border:1px solid #fcd34d;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:24px;font-size:.85rem;color:#78350f;">
+          <strong>⚠️ Authority accounts</strong> require verification by an admin before access is granted. Volunteer accounts are activated immediately.
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-full" style="justify-content:center;">
+          Create Account →
+        </button>
+      </form>
+
+      <div style="margin-top:24px;text-align:center;padding-top:20px;border-top:1px solid var(--border);">
+        <p style="font-size:.875rem;color:var(--muted);">
+          Already have an account?
+          <a href="{% url 'login' %}" style="color:var(--red);font-weight:600;">Log in here</a>
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

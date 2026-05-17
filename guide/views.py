@@ -40,8 +40,3 @@ def guide_create(request):
     else:
         form = GuideSectionForm()
     return render(request, 'guide/edit.html', {'form': form})
-
-
-from django.shortcuts import render
-
-# Create your views here.

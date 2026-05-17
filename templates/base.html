@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ResQ — Disaster Relief Platform{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+  <a href="{% url 'home' %}" class="navbar__brand">
+    <span class="brand-dot"></span>ResQ
+  </a>
+
+  <div class="navbar__links">
+    <a href="{% url 'home' %}#report">Report Incident</a>
+    <a href="{% url 'aid_page' %}">Aid</a>
+    <a href="{% url 'evacuation_page' %}">Safe Zones</a>
+    <a href="{% url 'guide_page' %}">Guide</a>
+    <a href="{% url 'contacts_page' %}">Contacts</a>
+    {% if user.is_authenticated %}
+      <a href="{% url 'incident_list' %}">Incidents</a>
+    {% endif %}
+  </div>
+
+  <div class="navbar__actions desktop">
+    {% if user.is_authenticated %}
+      <div class="nav-user">
+        <div class="avatar">{{ user.username|slice:":1"|upper }}</div>
+        <span>{{ user.username }}</span>
+      </div>
+      <a href="{% url 'dashboard' %}" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,.3);">Dashboard</a>
+      <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,.3);">Logout</button>
+      </form>
+    {% else %}
+      <a href="{% url 'login' %}" class="btn btn-outline" style="color:white;border-color:rgba(255,255,255,.3);">Log In</a>
+      <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+    {% endif %}
+  </div>
+
+  <button class="hamburger" onclick="toggleMenu()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="{% url 'home' %}">Home</a>
+  <a href="{% url 'home' %}#report">Report Incident</a>
+  <a href="{% url 'aid_page' %}">Aid</a>
+  <a href="{% url 'evacuation_page' %}">Safe Zones</a>
+  <a href="{% url 'guide_page' %}">Guide</a>
+  <a href="{% url 'contacts_page' %}">Contacts</a>
+  <div class="divider"></div>
+  {% if user.is_authenticated %}
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit" style="background:none;border:none;color:rgba(255,255,255,.8);padding:10px 12px;font-size:1rem;cursor:pointer;width:100%;text-align:left;font-family:inherit;">Logout</button>
+    </form>
+  {% else %}
+    <a href="{% url 'login' %}">Log In</a>
+    <a href="{% url 'signup' %}">Sign Up</a>
+  {% endif %}
+</div>
+
+<!-- ── Flash Messages ── -->
+{% if messages %}
+<div class="messages">
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% elif message.tags == 'warning' %}warning{% else %}info{% endif %}">
+    <span>
+      {% if message.tags == 'error' %}⚠️{% elif message.tags == 'success' %}✅{% elif message.tags == 'warning' %}⚡{% else %}ℹ️{% endif %}
+      {{ message }}
+    </span>
+    <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ── Main Content ── -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ── Footer ── -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <div class="footer__brand">ResQ</div>
+      <div class="footer__tagline">Disaster Relief Platform · Bangladesh</div>
+    </div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;">
+      <a href="{% url 'aid_page' %}" style="color:rgba(255,255,255,.55);font-size:.875rem;">Aid & Donations</a>
+      <a href="{% url 'evacuation_page' %}" style="color:rgba(255,255,255,.55);font-size:.875rem;">Safe Zones</a>
+      <a href="{% url 'guide_page' %}" style="color:rgba(255,255,255,.55);font-size:.875rem;">Survival Guide</a>
+      <a href="{% url 'contacts_page' %}" style="color:rgba(255,255,255,.55);font-size:.875rem;">Emergency Contacts</a>
+    </div>
+    <div class="footer__hotline">
+      📞 National Emergency: <strong>999</strong>
+    </div>
+  </div>
+  <div style="max-width:1200px;margin:20px auto 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);text-align:center;font-size:.78rem;color:rgba(255,255,255,.35);">
+    © {% now "Y" %} ResQ. Built for disaster resilience in Bangladesh.
+  </div>
+</footer>
+
+<script>
+  function toggleMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('open');
+  }
+  // Auto-dismiss alerts after 5s
+  setTimeout(() => {
+    document.querySelectorAll('.alert').forEach(el => {
+      el.style.transition = 'opacity .4s';
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 400);
+    });
+  }, 5000);
+  // Active nav link
+  const links = document.querySelectorAll('.navbar__links a');
+  links.forEach(link => {
+    if (link.href === window.location.href) link.classList.add('active');
+  });
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

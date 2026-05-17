@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- ── Page Header ── -->
+<div class="page-header">
+  <div class="page-header__inner">
+    <div>
+      <h2 style="margin-bottom:4px;">Welcome back, {{ user.username }} 👋</h2>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:6px;">
+        {% if user.role == 'authority' %}
+          <span class="badge badge-authority">🛡️ Authority</span>
+        {% else %}
+          <span class="badge badge-volunteer">🤝 Volunteer</span>
+        {% endif %}
+        {% if user.is_verified %}
+          <span class="badge badge-resolved">✓ Verified</span>
+        {% else %}
+          <span class="badge badge-pending">Pending Verification</span>
+        {% endif %}
+      </div>
+    </div>
+    <div style="font-size:.875rem;color:var(--muted);">
+      Joined {{ user.date_joined|date:"M d, Y" }}
+    </div>
+  </div>
+</div>
+
+<div style="padding:40px 24px;">
+  <div class="container" style="display:grid;grid-template-columns:1fr 2fr;gap:32px;align-items:start;">
+
+    <div>
+      <div class="card">
+        <div style="text-align:center;padding-bottom:20px;border-bottom:1px solid var(--border);margin-bottom:20px;">
+          <div style="width:72px;height:72px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:2rem;font-weight:800;color:white;margin:0 auto 12px;">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+          <h4>{{ user.username }}</h4>
+          <small>{{ user.email }}</small>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:2px;">NID Number</div>
+            <div style="font-size:.9rem;font-weight:500;">{{ user.nid_number|default:"—" }}</div>
+          </div>
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:2px;">Contact</div>
+            <div style="font-size:.9rem;font-weight:500;">{{ user.contact_number|default:"—" }}</div>
+          </div>
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:2px;">Occupation</div>
+            <div style="font-size:.9rem;font-weight:500;">{{ user.occupation|default:"—" }}</div>
+          </div>
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:2px;">Workplace</div>
+            <div style="font-size:.9rem;font-weight:500;">{{ user.workplace|default:"—" }}</div>
+          </div>
+          <div>
+            <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600;margin-bottom:2px;">Role</div>
+            <div>
+              {% if user.role == 'authority' %}
+                <span class="badge badge-authority">Authority</span>
+              {% else %}
+                <span class="badge badge-volunteer">Volunteer</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      {% if user.role == 'authority' %}
+      <div style="margin-bottom:28px;">
+        <span class="section-label">Incident Management</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <a href="{% url 'incident_list' %}" class="quick-action">
+            <div class="qa-icon">🚨</div>
+            <div class="qa-text">
+              <strong>All Incident Reports</strong>
+              <small>View, manage, and resolve all reported incidents</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+        </div>
+      </div>
+
+      <div style="margin-bottom:28px;">
+        <span class="section-label">Donations & Aid</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <a href="{% url 'donation_list' %}" class="quick-action">
+            <div class="qa-icon">💰</div>
+            <div class="qa-text">
+              <strong>Manage Donations</strong>
+              <small>Verify cash donations and mark goods as received</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+          <a href="{% url 'update_lives_saved' %}" class="quick-action">
+            <div class="qa-icon">❤️</div>
+            <div class="qa-text">
+              <strong>Update Lives Saved</strong>
+              <small>Update the aid statistics counter</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+        </div>
+      </div>
+
+      <div style="margin-bottom:28px;">
+        <span class="section-label">Infrastructure</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <a href="{% url 'zone_create' %}" class="quick-action">
+            <div class="qa-icon">🏠</div>
+            <div class="qa-text">
+              <strong>Add Safe Zone</strong>
+              <small>Register a new shelter or evacuation zone</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+          <a href="{% url 'guide_create' %}" class="quick-action">
+            <div class="qa-icon">📖</div>
+            <div class="qa-text">
+              <strong>Edit Survival Guide</strong>
+              <small>Add or update emergency survival instructions</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+          <a href="{% url 'contact_create' %}" class="quick-action">
+            <div class="qa-icon">📞</div>
+            <div class="qa-text">
+              <strong>Add Emergency Contact</strong>
+              <small>Add fire, police, hospital or NGO contacts</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+        </div>
+      </div>
+
+      {% else %}
+      <div style="margin-bottom:28px;">
+        <span class="section-label">My Work</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <a href="{% url 'incident_list' %}" class="quick-action">
+            <div class="qa-icon">📋</div>
+            <div class="qa-text">
+              <strong>My Assigned Incidents</strong>
+              <small>View incidents assigned to you</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+          <a href="{% url 'home' %}#report" class="quick-action">
+            <div class="qa-icon">🚨</div>
+            <div class="qa-text">
+              <strong>Report an Incident</strong>
+              <small>Submit a new emergency report</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+        </div>
+      </div>
+
+      <div style="margin-bottom:28px;">
+        <span class="section-label">Resources</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+          <a href="{% url 'guide_page' %}" class="quick-action">
+            <div class="qa-icon">📖</div>
+            <div class="qa-text">
+              <strong>Survival Guide</strong>
+              <small>Emergency procedures and safety instructions</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+          <a href="{% url 'evacuation_page' %}" class="quick-action">
+            <div class="qa-icon">🏠</div>
+            <div class="qa-text">
+              <strong>Find Safe Zones</strong>
+              <small>Locate shelters and evacuation points near you</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+          <a href="{% url 'contacts_page' %}" class="quick-action">
+            <div class="qa-icon">📞</div>
+            <div class="qa-text">
+              <strong>Emergency Contacts</strong>
+              <small>Quick-dial fire, police, and hospital numbers</small>
+            </div>
+            <div style="margin-left:auto;color:var(--muted);">→</div>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

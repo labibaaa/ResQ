@@ -22,4 +22,5 @@ urlpatterns = [
     path('list/', views.incident_list, name='incident_list'),
     path('<int:pk>/', views.incident_detail, name='incident_detail'),
     path('<int:pk>/resolve/', views.resolve_incident, name='resolve_incident'),
+    path('<int:pk>/assign/', views.assign_volunteer, name='assign_volunteer'),
 ]

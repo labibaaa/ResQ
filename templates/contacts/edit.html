@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}ResQ — {% if form.instance.pk %}Edit{% else %}Add{% endif %} Emergency Contact{% endblock %}
+
+{% block content %}
+<div style="padding:48px 24px;background:var(--surface);min-height:calc(100vh - var(--nav-h));">
+  <div class="container-sm">
+
+    <a href="{% url 'contacts_page' %}" class="back-link" style="margin-bottom:24px;display:inline-flex;">← Back to Contacts</a>
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">📞</div>
+      <span class="section-label">{% if form.instance.pk %}Edit Contact{% else %}New Contact{% endif %}</span>
+      <h2>{% if form.instance.pk %}Edit Emergency Contact{% else %}Add Emergency Contact{% endif %}</h2>
+      <p style="margin-top:8px;">Add verified emergency service contacts for people in need.</p>
+    </div>
+
+    <div class="card" style="padding:40px;">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="id_name">Contact / Organization Name</label>
+          {{ form.name }}
+          {% if form.name.errors %}<div class="form-error">{{ form.name.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_category">Category</label>
+          {{ form.category }}
+          {% if form.category.errors %}<div class="form-error">{{ form.category.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_phone_number">Phone Number</label>
+          {{ form.phone_number }}
+          <div class="form-hint">Include country code if international. e.g. +8801XXXXXXXXX or 199</div>
+          {% if form.phone_number.errors %}<div class="form-error">{{ form.phone_number.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_address">Address (optional)</label>
+          {{ form.address }}
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_latitude">Latitude (optional)</label>
+            {{ form.latitude }}
+          </div>
+          <div class="form-group">
+            <label for="id_longitude">Longitude (optional)</label>
+            {{ form.longitude }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_notes">Notes (optional)</label>
+          {{ form.notes }}
+          <div class="form-hint">Operating hours, special instructions, or additional info.</div>
+        </div>
+
+        <div class="form-check" style="margin-bottom:24px;">
+          {{ form.is_active }}
+          <label for="id_is_active" style="font-weight:500;">This contact is currently active</label>
+        </div>
+
+        <div style="display:flex;gap:12px;">
+          <button type="submit" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">
+            Save Contact ✓
+          </button>
+          <a href="{% url 'contacts_page' %}" class="btn btn-outline btn-lg">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}ResQ — Emergency Survival Guide{% endblock %}
+
+{% block content %}
+
+<!-- Header -->
+<section style="background:var(--navy);padding:56px 24px;border-bottom:2px solid var(--red);">
+  <div class="container">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div>
+        <span class="section-label">Safety Instructions</span>
+        <h1 style="color:white;margin-bottom:8px;">Emergency Survival Guide</h1>
+        <p style="color:rgba(255,255,255,.7);max-width:500px;">
+          Official emergency procedures and safety guidelines for disasters most common in Bangladesh. Know what to do before it happens.
+        </p>
+      </div>
+      {% if user.is_authenticated and user.role == 'authority' %}
+      <a href="{% url 'guide_create' %}" class="btn btn-primary btn-lg">+ Add Section</a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- Navigation Pills -->
+{% if sections %}
+<div style="background:white;border-bottom:1px solid var(--border);padding:16px 24px;position:sticky;top:var(--nav-h);z-index:50;">
+  <div class="container" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+    <span style="font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Jump to:</span>
+    {% for section in sections %}
+    <a href="#{{ section.emergency_type }}" class="filter-btn" style="text-decoration:none;">
+      {% if section.emergency_type == 'fire' %}🔥
+      {% elif section.emergency_type == 'flood' %}🌊
+      {% elif section.emergency_type == 'earthquake' %}🏚️
+      {% elif section.emergency_type == 'medical' %}🏥
+      {% elif section.emergency_type == 'structural' %}🏗️
+      {% else %}⚡{% endif %}
+      {{ section.emergency_type|title }}
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div style="padding:48px 24px;">
+  <div class="container-md">
+
+    {% if sections %}
+    {% for section in sections %}
+    <div class="guide-section" id="{{ section.emergency_type }}">
+      <div class="guide-section__head">
+        <div>
+          <div style="font-size:2.25rem;margin-bottom:8px;">
+            {% if section.emergency_type == 'fire' %}🔥
+            {% elif section.emergency_type == 'flood' %}🌊
+            {% elif section.emergency_type == 'earthquake' %}🏚️
+            {% elif section.emergency_type == 'medical' %}🏥
+            {% elif section.emergency_type == 'structural' %}🏗️
+            {% else %}⚡{% endif %}
+          </div>
+          <h3>{{ section.title }}</h3>
+          <small class="text-muted">Last updated: {{ section.updated_at|date:"F j, Y" }}</small>
+        </div>
+        {% if user.is_authenticated and user.role == 'authority' %}
+        <a href="{% url 'guide_edit' section.id %}" class="btn btn-outline btn-sm" style="flex-shrink:0;">Edit</a>
+        {% endif %}
+      </div>
+
+      <!-- DOs and DON'Ts -->
+      <div class="dos-donts">
+        <div>
+          <div style="background:var(--green-light);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:14px;font-family:var(--font-display);font-weight:700;font-size:.85rem;color:#14532d;display:flex;align-items:center;gap:8px;">
+            ✓ DO These Things
+          </div>
+          <ul class="do-list" style="list-style:none;padding:0;">
+            {% for item in section.dos_list %}
+            <li>{{ item }}</li>
+            {% empty %}
+            <li style="color:var(--muted);font-style:italic;">No items listed.</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <div>
+          <div style="background:var(--red-light);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:14px;font-family:var(--font-display);font-weight:700;font-size:.85rem;color:#7f1d1d;display:flex;align-items:center;gap:8px;">
+            ✕ DON'T Do These
+          </div>
+          <ul class="dont-list" style="list-style:none;padding:0;">
+            {% for item in section.donts_list %}
+            <li>{{ item }}</li>
+            {% empty %}
+            <li style="color:var(--muted);font-style:italic;">No items listed.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      {% if section.extra_info %}
+      <div style="margin-top:24px;padding:16px 20px;background:var(--blue-light);border-left:4px solid var(--blue);border-radius:0 var(--radius-sm) var(--radius-sm) 0;">
+        <strong style="font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:#1e3a8a;">ℹ️ Additional Information</strong>
+        <p style="margin-top:6px;font-size:.9rem;color:#1e3a8a;">{{ section.extra_info }}</p>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">📖</div>
+      <h3>No guide sections yet</h3>
+      <p>{% if user.is_authenticated and user.role == 'authority' %}Add the first guide section using the button above.{% else %}Emergency guide content will appear here once added by authorities.{% endif %}</p>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}ResQ — {% if form.instance.pk %}Edit{% else %}Add{% endif %} Guide Section{% endblock %}
+
+{% block content %}
+<div style="padding:48px 24px;background:var(--surface);min-height:calc(100vh - var(--nav-h));">
+  <div class="container-sm">
+
+    <a href="{% url 'guide_page' %}" class="back-link" style="margin-bottom:24px;display:inline-flex;">← Back to Guide</a>
+
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:2.5rem;margin-bottom:12px;">📖</div>
+      <span class="section-label">{% if form.instance.pk %}Edit Section{% else %}New Section{% endif %}</span>
+      <h2>{% if form.instance.pk %}Edit Guide Section{% else %}Add Guide Section{% endif %}</h2>
+      <p style="margin-top:8px;">Provide clear, actionable instructions for emergency situations.</p>
+    </div>
+
+    <div class="card" style="padding:40px;">
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="id_emergency_type">Emergency Type</label>
+          {{ form.emergency_type }}
+          {% if form.emergency_type.errors %}<div class="form-error">{{ form.emergency_type.errors }}</div>{% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="id_title">Section Title</label>
+          {{ form.title }}
+          {% if form.title.errors %}<div class="form-error">{{ form.title.errors }}</div>{% endif %}
+        </div>
+
+        <div style="background:var(--amber-light);border:1px solid #fcd34d;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:20px;font-size:.83rem;color:#78350f;">
+          📝 <strong>Formatting tip:</strong> Enter each DO or DON'T on a separate line. Each line becomes one item in the list.
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="id_dos">DOs — What people SHOULD do</label>
+            {{ form.dos }}
+            <div class="form-hint">One action per line. e.g. "Evacuate immediately"</div>
+            {% if form.dos.errors %}<div class="form-error">{{ form.dos.errors }}</div>{% endif %}
+          </div>
+          <div class="form-group">
+            <label for="id_donts">DON'Ts — What people should AVOID</label>
+            {{ form.donts }}
+            <div class="form-hint">One action per line. e.g. "Do not use elevators"</div>
+            {% if form.donts.errors %}<div class="form-error">{{ form.donts.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_extra_info">Additional Information (optional)</label>
+          {{ form.extra_info }}
+          <div class="form-hint">Any extra context, resources, or important notes for this emergency type.</div>
+        </div>
+
+        <div style="display:flex;gap:12px;margin-top:8px;">
+          <button type="submit" class="btn btn-primary btn-lg" style="flex:1;justify-content:center;">
+            Save Section ✓
+          </button>
+          <a href="{% url 'guide_page' %}" class="btn btn-outline btn-lg">Cancel</a>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>
+
+{% block extra_scripts %}
+<style>
+  #id_dos, #id_donts { min-height: 180px; font-family: var(--font-body); }
+</style>
+{% endblock %}
+
+{% endblock %}
